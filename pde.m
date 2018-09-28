@@ -1,11 +1,14 @@
 clear all;clc;
+format long e
 nlist=[5,10,20,40,80]
+count_n=length(nlist)
+
 figure(1)
 hold on
 title("log(h)-log(Eh)")
-Ehlist=zeros(1,5);
-hlist=zeros(1,5)
-for z=1:length(nlist)
+Ehlist=zeros(1,count_n);
+hlist=zeros(1,count_n)
+for z=1:count_n
     n=nlist(z)
     alpha=zeros(1,n);beta=zeros(1,n);gamma=zeros(1,n-1);
     A=zeros(n,n);
@@ -71,9 +74,20 @@ for z=1:length(nlist)
     end
     h
     temp
-    [Eh,p] = max(temp)
+    [Eh,p] = max(temp);
     fprintf('%.8f',Eh);
     Ehlist(z)=Eh;
     hlist(z)=h;
 end
+Ehlist
+rateofconvergence=zeros(1,count_n-1);
+for k=2:count_n
+    rateofconvergence(k-1)=rate(Ehlist(k),Ehlist(k-1),hlist(k),hlist(k-1));
+end
+rateofconvergence    
 plot(log(hlist),log(Ehlist),'r-*');
+
+function [slope]=rate(e1,e2,h1,h2)
+slope=(log(e1)-log(e2))/(log(h1)-log(h2));
+end
+
